@@ -1,0 +1,28 @@
+version:  '3.3'
+services:
+  mysqldb:
+    image: mysql:5.7
+    networks:
+      - net
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=go_bookstore
+      - MYSQL_USER=sa
+      - MYSQL_PASSWORD=1234
+    ports:
+        - "3306:3306"
+    volumes:
+      - ./src/res:/docker-entrypoint-initdb.d
+  server:
+    build: .
+    ports:
+      - "8010:8010"
+    environment:
+      - DB_URL=sa:1234@tcp(mysqldb:3306)/go_bookstore
+    networks:
+      - net
+    depends_on:
+      - mysqldb
+
+networks:
+  net:
